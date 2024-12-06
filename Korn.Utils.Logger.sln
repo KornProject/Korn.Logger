@@ -5,6 +5,10 @@ VisualStudioVersion = 17.12.35506.116 d17.12
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Korn.Utils.Logger", "Korn.Utils.Logger\Korn.Utils.Logger.csproj", "{FBF31AB3-5327-46E9-9BAF-7324D7E6625B}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Korn", "Korn", "{F5DBC88E-18F3-4E39-BCA0-220CC763F0AC}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Korn.Utils.System", "..\Korn.Utils.System\Korn.Utils.System\Korn.Utils.System.csproj", "{63C394E1-FDD3-4253-94B5-7F177EEB69CC}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -21,8 +25,19 @@ Global
 		{FBF31AB3-5327-46E9-9BAF-7324D7E6625B}.Release|Any CPU.Build.0 = Release|Any CPU
 		{FBF31AB3-5327-46E9-9BAF-7324D7E6625B}.Release|x64.ActiveCfg = Release|Any CPU
 		{FBF31AB3-5327-46E9-9BAF-7324D7E6625B}.Release|x64.Build.0 = Release|Any CPU
+		{63C394E1-FDD3-4253-94B5-7F177EEB69CC}.Debug|Any CPU.ActiveCfg = Debug|x64
+		{63C394E1-FDD3-4253-94B5-7F177EEB69CC}.Debug|Any CPU.Build.0 = Debug|x64
+		{63C394E1-FDD3-4253-94B5-7F177EEB69CC}.Debug|x64.ActiveCfg = Debug|x64
+		{63C394E1-FDD3-4253-94B5-7F177EEB69CC}.Debug|x64.Build.0 = Debug|x64
+		{63C394E1-FDD3-4253-94B5-7F177EEB69CC}.Release|Any CPU.ActiveCfg = Release|x64
+		{63C394E1-FDD3-4253-94B5-7F177EEB69CC}.Release|Any CPU.Build.0 = Release|x64
+		{63C394E1-FDD3-4253-94B5-7F177EEB69CC}.Release|x64.ActiveCfg = Release|x64
+		{63C394E1-FDD3-4253-94B5-7F177EEB69CC}.Release|x64.Build.0 = Release|x64
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{63C394E1-FDD3-4253-94B5-7F177EEB69CC} = {F5DBC88E-18F3-4E39-BCA0-220CC763F0AC}
 	EndGlobalSection
 EndGlobal
