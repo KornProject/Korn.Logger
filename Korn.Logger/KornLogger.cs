@@ -1,6 +1,8 @@
-﻿using System.Reflection;
+﻿using Korn.Logger.Internal;
+using Korn.Utils;
+using System.Reflection;
 
-namespace Korn.Utils.Logger;
+namespace Korn;
 public static class KornLogger
 {
     static bool initialized;

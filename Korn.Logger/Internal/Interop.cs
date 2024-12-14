@@ -1,7 +1,7 @@
 ﻿using System.Runtime.InteropServices;
 
-namespace Korn.Utils.Logger;
-static class Interop
+namespace Korn.Logger.Internal;
+internal static class Interop
 {
     const string user = "user32";
 
