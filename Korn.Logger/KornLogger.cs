@@ -5,16 +5,6 @@ using System.Reflection;
 namespace Korn;
 public static class KornLogger
 {
-    static bool initialized;
-    public static void EnsureInitialized()
-    {
-        if (initialized) 
-            return;
-        initialized = true;
-
-        Initialize();
-    }
-
     static string? cachedKornLogPath;
     static string? cachedTempKornLogPath;
     const string KORN_PATH_VARIABLE_NAME = "KORN_PATH";
@@ -48,46 +38,37 @@ public static class KornLogger
         return cachedTempKornLogPath = tempLogFilePath;
     }
 
-    static void Initialize()
+    public static void HandleException(Exception exception)
     {
-        AppDomain.CurrentDomain.UnhandledException += UnhandledException;
-
-        void UnhandledException(object sender, UnhandledExceptionEventArgs e)
+        switch (exception)
         {
-            var exception = e.ExceptionObject as Exception;
-            if (exception is null)
-                return;
+            case KornException kornException:
+                if (kornException.ShowMessageBox)
+                    Exception(kornException);
+                else WriteException(kornException);
+                break;
 
-            switch (exception)
-            {
-                case KornException kornException:
-                    if (kornException.ShowMessageBox)
-                        Exception(kornException);
-                    else WriteException(kornException);
-                    break;
+            case KornExpectedException kornExpectedException:
+                if (kornExpectedException.ShowMessageBox)
+                    ExpectedException(kornExpectedException);
+                else WriteExpectedException(kornExpectedException);
+                break;
 
-                case KornExpectedException kornExpectedException:
-                    if (kornExpectedException.ShowMessageBox)
-                        ExpectedException(kornExpectedException);
-                    else WriteExpectedException(kornExpectedException);
-                    break;
+            case KornUnexpectedError kornError:
+                if (kornError.ShowMessageBox)
+                    UnxepectedError(kornError.Message);
+                else WriteUnexpectedError(kornError.Message);
+                break;
 
-                case KornUnexpectedError kornError:
-                    if (kornError.ShowMessageBox)
-                        UnxepectedError(kornError.Message);
-                    else WriteUnexpectedError(kornError.Message);
-                    break;
+            case KornError kornExpectedError:
+                if (kornExpectedError.ShowMessageBox)
+                    Error(kornExpectedError.Message);
+                else WriteError(kornExpectedError.Message);
+                break;
 
-                case KornError kornExpectedError:
-                    if (kornExpectedError.ShowMessageBox)
-                        Error(kornExpectedError.Message);
-                    else WriteError(kornExpectedError.Message);
-                    break;
-
-                default:
-                    WriteUnhandledException(exception);
-                    break;
-            }
+            default:
+                WriteUnhandledException(exception);
+                break;
         }
     }
 
@@ -166,13 +147,15 @@ public static class KornLogger
 
 public abstract class BaseKornException : Exception
 {
-    static BaseKornException() => KornLogger.EnsureInitialized();
-
-    public BaseKornException(string message, bool showMessageBox)
-        => (Message, ShowMessageBox) = (message, showMessageBox);
-
     public BaseKornException(string[] messageLines, bool showMessageBox = true)
         : this(string.Join(' ', messageLines), showMessageBox) { }
+
+    public BaseKornException(string message, bool showMessageBox = true)
+    {
+        (Message, ShowMessageBox) = (message, showMessageBox);
+
+        KornLogger.HandleException(this);
+    }
 
     public new string Message;
     public bool ShowMessageBox;
