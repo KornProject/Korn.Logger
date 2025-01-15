@@ -158,6 +158,8 @@ public abstract class BaseKornException : Exception
     {
         ShowMessageBox = showMessageBox;
         KornLogger.Internal.HandleException(this, Assembly.GetCallingAssembly());
+
+        throw this;
     }
 
     public bool ShowMessageBox;
