@@ -1,13 +1,12 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFramework>net8.0-windows</TargetFramework>
-    <ImplicitUsings>enable</ImplicitUsings>
-    <Nullable>enable</Nullable>
-    <Platforms>AnyCPU;x64;x64</Platforms>
+    <TargetFrameworks>net8.0-windows;net472</TargetFrameworks>
+    <Platforms>x64</Platforms>
   </PropertyGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\..\Korn.Shared\Korn.Shared.Internal\Korn.Shared.Internal.csproj" />
     <ProjectReference Include="..\..\Korn.Utils.System\Korn.Utils.System\Korn.Utils.System.csproj" />
   </ItemGroup>
 
