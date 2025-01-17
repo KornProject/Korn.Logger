@@ -7,7 +7,6 @@
 
   <ItemGroup>
     <ProjectReference Include="..\..\Korn.Shared\Korn.Shared.Internal\Korn.Shared.Internal.csproj" />
-    <ProjectReference Include="..\..\Korn.Utils.System\Korn.Utils.System\Korn.Utils.System.csproj" />
   </ItemGroup>
 
 </Project>
