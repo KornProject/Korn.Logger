@@ -1,5 +1,4 @@
 ﻿using Korn.Logger.Internal;
-using Korn.Shared.Internal;
 using System;
 using System.Diagnostics;
 using System.IO;
@@ -18,7 +17,7 @@ namespace Korn
                 File.Create(logPath).Dispose();
         }
 
-        Internal Implementation;
+        internal Internal Implementation;
 
         public void Write(string text) => Implementation.Write(text);
         public void WriteLineWithoutTags(string text) => Implementation.WriteLineWithoutTags(text);
@@ -37,7 +36,7 @@ namespace Korn
         public void Error(string message) => Implementation.Error(message, Assembly.GetCallingAssembly());
         public void Exception(Exception exception) => Implementation.Exception(exception, Assembly.GetCallingAssembly());
 
-        class Internal
+        internal class Internal
         {
             public Internal(string logPath, string instanceId)
             {
@@ -100,6 +99,117 @@ namespace Korn
                 WriteExpectedException(exception, assembly);
                 Interop.MessageBox(exception.ToString(), "Korn expected exception");
             }
+
+            public void HandleException(Exception exception, Assembly assembly)
+            {
+                switch (exception)
+                {
+                    case KornException kornException:
+                        if (kornException.ShowMessageBox)
+                            Exception(kornException, assembly);
+                        else WriteException(kornException, assembly);
+                        break;
+
+                    case KornExpectedException kornExpectedException:
+                        if (kornExpectedException.ShowMessageBox)
+                            ExpectedException(kornExpectedException, assembly);
+                        else WriteExpectedException(kornExpectedException, assembly);
+                        break;
+
+                    case KornUnexpectedError kornError:
+                        if (kornError.ShowMessageBox)
+                            UnxepectedError(kornError.Message, assembly);
+                        else WriteUnexpectedError(kornError.Message, true, assembly);
+                        break;
+
+                    case KornError kornExpectedError:
+                        if (kornExpectedError.ShowMessageBox)
+                            Error(kornExpectedError.Message, assembly);
+                        else WriteError(kornExpectedError.Message, true, assembly);
+                        break;
+
+                    default:
+                        WriteUnhandledException(exception, assembly);
+                        break;
+                }
+            }
         }
+    }
+
+    public abstract class BaseKornException : Exception
+    {
+        static KornLogger ExceptionLogger;
+        public static bool HasBindedLogger() => ExceptionLogger != null;
+        public static void BindLogger(KornLogger logger) => ExceptionLogger = logger;
+
+        public BaseKornException(string[] messageLines, bool showMessageBox = true)
+            : this(string.Join(" ", messageLines), showMessageBox) { }
+
+        public BaseKornException(Exception exception, bool showMessageBox = true)
+            : base("Empty exception message", exception) { }
+
+        public BaseKornException(string message, Exception exception, bool showMessageBox = true)
+            : base(message, exception) { }
+
+        public BaseKornException(string message, bool showMessageBox = true) : base(message)
+        {
+            ShowMessageBox = showMessageBox;
+            ExceptionLogger.Implementation.HandleException(this, Assembly.GetCallingAssembly());
+
+            throw this;
+        }
+
+        public bool ShowMessageBox;
+    }
+
+    public class KornException : BaseKornException
+    {
+        public KornException(string message, Exception exception, bool showMessageBox = true)
+            : base(message, exception, showMessageBox) { }
+
+        public KornException(Exception exception, bool showMessageBox = true)
+            : base(exception, showMessageBox) { }
+
+        public KornException(string message, bool showMessageBox = true)
+            : base(message, showMessageBox) { }
+
+        public KornException(string[] messageLines, bool showMessageBox = true)
+            : base(messageLines, showMessageBox) { }
+    }
+
+    public class KornExpectedException : BaseKornException
+    {
+        public KornExpectedException(string message, Exception exception, bool showMessageBox = true)
+        : base($"{message}: {exception}", showMessageBox) { }
+
+        public KornExpectedException(Exception exception, bool showMessageBox = true)
+            : base(exception.ToString(), showMessageBox) { }
+
+        public KornExpectedException(string message, bool showMessageBox = true)
+            : base(message, showMessageBox) { }
+
+        public KornExpectedException(string[] messageLines, bool showMessageBox = true)
+            : base(messageLines, showMessageBox) { }
+    }
+
+    public class KornUnexpectedError : BaseKornException
+    {
+        public KornUnexpectedError(string message, bool showMessageBox = true)
+            : base(message, showMessageBox) { }
+
+        public KornUnexpectedError(string[] messageLines, bool showMessageBox = true)
+            : base(messageLines, showMessageBox) { }
+    }
+
+    public class KornError : BaseKornException
+    {
+        public KornError(string message, bool showMessageBox = true)
+            : base(message, showMessageBox) { }
+
+        public KornError(string[] messageLines, bool showMessageBox)
+            : base(messageLines, showMessageBox) { }
+
+        public KornError(params string[] messageLines)
+            : base(messageLines, true) { }
     }
 }
