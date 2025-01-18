@@ -173,14 +173,17 @@ namespace Korn
         public KornException(string message, bool showMessageBox = true)
             : base(message, showMessageBox) { }
 
-        public KornException(string[] messageLines, bool showMessageBox = true)
+        public KornException(string[] messageLines, bool showMessageBox)
             : base(messageLines, showMessageBox) { }
+
+        public KornException(params string[] messageLines)
+            : base(messageLines, true) { }
     }
 
     public class KornExpectedException : BaseKornException
     {
         public KornExpectedException(string message, Exception exception, bool showMessageBox = true)
-        : base($"{message}: {exception}", showMessageBox) { }
+            : base($"{message}: {exception}", showMessageBox) { }
 
         public KornExpectedException(Exception exception, bool showMessageBox = true)
             : base(exception.ToString(), showMessageBox) { }
@@ -188,8 +191,11 @@ namespace Korn
         public KornExpectedException(string message, bool showMessageBox = true)
             : base(message, showMessageBox) { }
 
-        public KornExpectedException(string[] messageLines, bool showMessageBox = true)
+        public KornExpectedException(string[] messageLines, bool showMessageBox)
             : base(messageLines, showMessageBox) { }
+
+        public KornExpectedException(params string[] messageLines)
+            : base(messageLines, true) { }
     }
 
     public class KornUnexpectedError : BaseKornException
@@ -197,8 +203,11 @@ namespace Korn
         public KornUnexpectedError(string message, bool showMessageBox = true)
             : base(message, showMessageBox) { }
 
-        public KornUnexpectedError(string[] messageLines, bool showMessageBox = true)
+        public KornUnexpectedError(string[] messageLines, bool showMessageBox)
             : base(messageLines, showMessageBox) { }
+
+        public KornUnexpectedError(params string[] messageLines)
+            : base(messageLines, true) { }
     }
 
     public class KornError : BaseKornException
