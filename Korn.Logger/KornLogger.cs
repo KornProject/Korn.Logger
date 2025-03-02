@@ -11,7 +11,7 @@ namespace Korn
     {
         public KornLogger(string logPath)
         {
-            Implementation = new Internal(logPath, $"{Process.GetCurrentProcess().Id:X}".PadRight(5));
+            Implementation = new Internal(logPath, Convert.ToString(Process.GetCurrentProcess().Id, 16).PadRight(5));
 
             if (!File.Exists(logPath))
                 File.Create(logPath).Dispose();
@@ -19,10 +19,12 @@ namespace Korn
 
         internal Internal Implementation;
 
+
         public void Write(string text) => Implementation.Write(text);
         public void WriteLineWithoutTags(string text) => Implementation.WriteLineWithoutTags(text);
         public void WriteLine(object obj) => Implementation.WriteLine(obj is null ? "{null}" : obj.ToString() ?? "{null}", Assembly.GetCallingAssembly());
         public void WriteMessage(string message) => Implementation.WriteMessage(message, Assembly.GetCallingAssembly());
+        public void WriteWarning(string message) => Implementation.WriteWarning(message, Assembly.GetCallingAssembly());
         public void WriteException(Exception exception) => Implementation.WriteException(exception, Assembly.GetCallingAssembly());
         public void WriteUnhandledException(Exception exception) => Implementation.WriteUnhandledException(exception, Assembly.GetCallingAssembly());
         public void WriteExpectedException(Exception exception) => Implementation.WriteExpectedException(exception, Assembly.GetCallingAssembly());
@@ -61,6 +63,7 @@ namespace Korn
             public void WriteLineWithoutTags(string text) => Write(text + '\n');
             public void WriteLine(string text, Assembly assembly) => Write($"{DateTime.Now:yy/MM/dd HH:mm:ss.fff} {InstanceID} [{assembly.GetName().Name}{(string.IsNullOrEmpty(Thread.CurrentThread.Name) ? "" : $"/{Thread.CurrentThread.Name}")}] " + text + '\n');
             public void WriteMessage(string message, Assembly assembly) => WriteLine(message, assembly);
+            public void WriteWarning(string message, Assembly assembly) => WriteLine("[Warning] " + message, assembly);
             public void WriteException(Exception exception, Assembly assembly) => WriteLine("[Exception] " + exception.ToString(), assembly);
             public void WriteUnhandledException(Exception exception, Assembly assembly) => WriteLine("[Unhandled exception] " + exception.ToString(), assembly);
             public void WriteExpectedException(Exception exception, Assembly assembly) => WriteLine("[Expected exception] " + exception.ToString(), assembly);
