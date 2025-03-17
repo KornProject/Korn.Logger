@@ -7,9 +7,9 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Korn.Logger", "Korn.Logger\
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Korn", "Korn", "{F5DBC88E-18F3-4E39-BCA0-220CC763F0AC}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Korn.Utils.System", "..\Korn.Utils.System\Korn.Utils.System\Korn.Utils.System.csproj", "{63C394E1-FDD3-4253-94B5-7F177EEB69CC}"
-EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Korn.Shared.Internal", "..\Korn.Shared.Internal\Korn.Shared.Internal\Korn.Shared.Internal.csproj", "{944C8608-D849-4EFB-892F-9718D8A04EA4}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Console", "Console\Console.csproj", "{C398E811-A1BA-46B4-8C66-CB4274144B34}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -21,20 +21,19 @@ Global
 		{FBF31AB3-5327-46E9-9BAF-7324D7E6625B}.Debug|x64.Build.0 = Debug|x64
 		{FBF31AB3-5327-46E9-9BAF-7324D7E6625B}.Release|x64.ActiveCfg = Release|x64
 		{FBF31AB3-5327-46E9-9BAF-7324D7E6625B}.Release|x64.Build.0 = Release|x64
-		{63C394E1-FDD3-4253-94B5-7F177EEB69CC}.Debug|x64.ActiveCfg = Debug|x64
-		{63C394E1-FDD3-4253-94B5-7F177EEB69CC}.Debug|x64.Build.0 = Debug|x64
-		{63C394E1-FDD3-4253-94B5-7F177EEB69CC}.Release|x64.ActiveCfg = Release|x64
-		{63C394E1-FDD3-4253-94B5-7F177EEB69CC}.Release|x64.Build.0 = Release|x64
 		{944C8608-D849-4EFB-892F-9718D8A04EA4}.Debug|x64.ActiveCfg = Debug|x64
 		{944C8608-D849-4EFB-892F-9718D8A04EA4}.Debug|x64.Build.0 = Debug|x64
 		{944C8608-D849-4EFB-892F-9718D8A04EA4}.Release|x64.ActiveCfg = Release|x64
 		{944C8608-D849-4EFB-892F-9718D8A04EA4}.Release|x64.Build.0 = Release|x64
+		{C398E811-A1BA-46B4-8C66-CB4274144B34}.Debug|x64.ActiveCfg = Debug|x64
+		{C398E811-A1BA-46B4-8C66-CB4274144B34}.Debug|x64.Build.0 = Debug|x64
+		{C398E811-A1BA-46B4-8C66-CB4274144B34}.Release|x64.ActiveCfg = Release|x64
+		{C398E811-A1BA-46B4-8C66-CB4274144B34}.Release|x64.Build.0 = Release|x64
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
-		{63C394E1-FDD3-4253-94B5-7F177EEB69CC} = {F5DBC88E-18F3-4E39-BCA0-220CC763F0AC}
 		{944C8608-D849-4EFB-892F-9718D8A04EA4} = {F5DBC88E-18F3-4E39-BCA0-220CC763F0AC}
 	EndGlobalSection
 EndGlobal
