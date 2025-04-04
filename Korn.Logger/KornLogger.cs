@@ -1,22 +1,22 @@
-﻿using Korn.Logger.Internal;
-using Korn.Shared.Internal;
-using System;
+﻿using System.Runtime.CompilerServices;
+using Korn.Logger.Internal;
 using System.Diagnostics;
-using System.IO;
 using System.Reflection;
-using System.Runtime.CompilerServices;
+using Korn.Logger.Core;
 using System.Threading;
+using System;
 
 namespace Korn
 {
     public class KornLogger
     {
+        static LoggerClient client = new LoggerClient();
+
         public KornLogger(string logPath)
         {
-            Implementation = new Internal(logPath, Convert.ToString(Process.GetCurrentProcess().Id, 16).PadRight(5));
-
-            if (!File.Exists(logPath))
-                File.Create(logPath).Dispose();
+            var loggerHandle = client.GetLoggerHandle(logPath);
+            var instanceId = Convert.ToString(Process.GetCurrentProcess().Id, 16).PadRight(5);
+            Implementation = new Internal(loggerHandle, instanceId);
         }
 
         internal Internal Implementation;
@@ -42,34 +42,14 @@ namespace Korn
 
         internal class Internal
         {
-            public Internal(string logPath, string instanceId)
-            {
-                LogPath = logPath;
-                InstanceID = instanceId;
-            }
+            public Internal(LoggerHandle loggerHandle, string instanceId)
+                => (LoggerHandle, InstanceID) = (loggerHandle, instanceId);
 
-            public readonly string LogPath;
+            public readonly LoggerHandle LoggerHandle;
             public readonly string InstanceID;
 
-            void InternalWrite(string text)
-            {
-                using (var mutex = new Mutex(false, $"{LogPath.GetHashCode():X}lm"))
-                {
-                    mutex.WaitOne();
-                    File.AppendAllText(LogPath, text);
-                    mutex.ReleaseMutex();
-                }
-            }
-
-            void InternalClear()
-            {
-                using (var mutex = new Mutex(false, $"{LogPath.GetHashCode():X}lm"))
-                {
-                    mutex.WaitOne();
-                    File.WriteAllText(LogPath, "");
-                    mutex.ReleaseMutex();
-                }
-            }
+            void InternalWrite(string text) => client.Write(LoggerHandle, text);
+            void InternalClear() => client.Clear(LoggerHandle);
 
             string GetThreadTag() => string.IsNullOrEmpty(Thread.CurrentThread.Name) ? "" : Thread.CurrentThread.Name == ".NET TP Worker" ? "" : $"/{Thread.CurrentThread.Name}";
 

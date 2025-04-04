@@ -6,6 +6,9 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\..\Korn.Logger.Core\Korn.Logger.Core\Korn.Logger.Core.csproj" />
+    <ProjectReference Include="..\..\Korn.Service.Client\Korn.Service.Client\Korn.Service.Client.csproj" />
+    <ProjectReference Include="..\..\Korn.Service.Shared\Korn.Service.Shared\Korn.Service.Shared.csproj" />
     <ProjectReference Include="..\..\Korn.Shared.Internal\Korn.Shared.Internal\Korn.Shared.Internal.csproj" />
   </ItemGroup>
 
