@@ -1,5 +1,6 @@
 ﻿using System.Runtime.CompilerServices;
-using Korn.Logger.Internal;
+using System.Collections.Generic;
+using System.Threading.Tasks;
 using System.Diagnostics;
 using System.Reflection;
 using Korn.Logger.Core;
@@ -10,16 +11,20 @@ namespace Korn
 {
     public class KornLogger
     {
-        static LoggerClient client = new LoggerClient();
+        internal static LoggerClient LoggerClient = new LoggerClient();
 
         public KornLogger(string logPath)
         {
-            var loggerHandle = client.GetLoggerHandle(logPath);
             var instanceId = Convert.ToString(Process.GetCurrentProcess().Id, 16).PadRight(5);
-            Implementation = new Internal(loggerHandle, instanceId);
+            Implementation = new InternalImplementation(instanceId);
+            Task.Run(() =>
+            {
+                var loggerHandle = LoggerClient.GetLoggerHandle(logPath);
+                Implementation.SetLoggerHandle(loggerHandle);
+            });
         }
 
-        internal Internal Implementation;
+        internal InternalImplementation Implementation;
 
         public void Write(string text) => Implementation.Write(text);
         public void Clear() => Implementation.Clear();
@@ -40,23 +45,74 @@ namespace Korn
         public void Error(string message) => Implementation.Error(message, Assembly.GetCallingAssembly());
         public void Exception(Exception exception) => Implementation.Exception(exception, Assembly.GetCallingAssembly());
 
-        internal class Internal
+        internal class InternalImplementation
         {
-            public Internal(LoggerHandle loggerHandle, string instanceId)
-                => (LoggerHandle, InstanceID) = (loggerHandle, instanceId);
+            public InternalImplementation(string instanceId)
+                => InstanceID = instanceId;
 
-            public readonly LoggerHandle LoggerHandle;
+            public LoggerHandle LoggerHandle = LoggerHandle.Invalid;
             public readonly string InstanceID;
 
-            void InternalWrite(string text) => client.Write(LoggerHandle, text);
-            void InternalClear() => client.Clear(LoggerHandle);
+            public void SetLoggerHandle(LoggerHandle handle)
+            {
+                LoggerHandle = handle;
+
+                if (handle.IsValid)
+                    HasConnection();
+            }
+
+            bool hasNoConnectionData;
+            List<string> noConnectionWriteBuffer = new List<string>();
+            void InternalWrite(string text)
+            {
+                if (HasConnection())
+                    LoggerClient.Write(LoggerHandle, text);
+                else noConnectionWriteBuffer.Add(text);        
+            }
+
+            bool noConnectionClearRequest;
+            void InternalClear()
+            {
+                if (HasConnection())
+                    LoggerClient.Clear(LoggerHandle);
+                else
+                {
+                    noConnectionClearRequest = true;
+                    noConnectionWriteBuffer.Clear();
+                }
+            }
+
+            bool HasConnection()
+            {
+                var handle = LoggerHandle;
+                var isValid = handle.IsValid;
+
+                if (isValid)
+                {
+                    if (hasNoConnectionData)
+                    {
+                        hasNoConnectionData = false;
+
+                        if (noConnectionClearRequest)
+                            LoggerClient.Clear(handle);
+
+                        var buffer = noConnectionWriteBuffer;
+                        foreach (var message in buffer)
+                            LoggerClient.Write(handle, message);
+                        buffer.Clear();
+                    }
+                }
+                else hasNoConnectionData = true;
+
+                return isValid;
+            }
 
             string GetThreadTag() => string.IsNullOrEmpty(Thread.CurrentThread.Name) ? "" : Thread.CurrentThread.Name == ".NET TP Worker" ? "" : $"/{Thread.CurrentThread.Name}";
 
             public void Clear() => InternalClear();
             public void Write(string text) => InternalWrite(text);
             public void WriteLineWithoutTags(string text) => Write(text + '\n');
-            public void WriteLine(string text, Assembly assembly) => Write($"{DateTime.Now:yy/MM/dd HH:mm:ss.fff} {InstanceID} [{assembly.GetName().Name}{GetThreadTag()}] " + text + '\n');
+            public void WriteLine(string text, Assembly assembly) => Write($"{DateTime.Now:yy/MM/dd HH:mm:ss.fff} " + /*$"{InstanceID} [{assembly.GetName().Name}{GetThreadTag()}] " +*/ text + '\n');
             public void WriteMessage(string message, Assembly assembly) => WriteLine(message, assembly);
             public void WriteWarning(string[] message, Assembly assembly) => WriteLine("[Warning] " + string.Join(" ", message), assembly);
             public void WriteException(Exception exception, Assembly assembly) => WriteLine("[Exception] " + exception.ToString(), assembly);
@@ -69,33 +125,33 @@ namespace Korn
             public void Message(string message, Assembly assembly)
             {
                 WriteMessage(message, assembly);
-                Interop.MessageBox(message, "Korn message");
+                LocalInterop.MessageBox(message, "Korn message");
             }
 
             public void UnxepectedError(string[] messageLines, Assembly assembly) => UnxepectedError(string.Join(" ", messageLines), assembly);
             public void UnxepectedError(string message, Assembly assembly)
             {
                 WriteUnexpectedError(message, true, assembly);
-                Interop.MessageBox(message, "Korn unexpected error");
+                LocalInterop.MessageBox(message, "Korn unexpected error");
             }
 
             public void Error(string[] messageLines, Assembly assembly) => Error(string.Join(" ", messageLines), assembly);
             public void Error(string message, Assembly assembly)
             {
                 WriteError(message, false, assembly);
-                Interop.MessageBox(message, "Korn error");
+                LocalInterop.MessageBox(message, "Korn error");
             }
 
             public void Exception(Exception exception, Assembly assembly)
             {
                 WriteException(exception, assembly);
-                Interop.MessageBox(exception.ToString(), "Korn exception");
+                LocalInterop.MessageBox(exception.ToString(), "Korn exception");
             }
 
             public void ExpectedException(Exception exception, Assembly assembly)
             {
                 WriteExpectedException(exception, assembly);
-                Interop.MessageBox(exception.ToString(), "Korn expected exception");
+                LocalInterop.MessageBox(exception.ToString(), "Korn expected exception");
             }
 
             public void HandleException(Exception exception, Assembly assembly)
@@ -138,7 +194,7 @@ namespace Korn
     {
         static BaseKornException()
         {
-            var assembly = AppDomain.CurrentDomain.Load("Korn.Shared");
+            var assembly = AppDomain.CurrentDomain.Load("Korn.Core");
             if (assembly == null)
                 return;
 

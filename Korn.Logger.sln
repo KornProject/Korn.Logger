@@ -19,6 +19,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Korn.Pipes", "..\Korn.Pipes
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Korn.Logger.Core", "..\Korn.Logger.Core\Korn.Logger.Core\Korn.Logger.Core.csproj", "{32C1EF8C-A14E-487A-B7C3-BDFE2913C4DB}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Korn.Shared", "..\Korn.Shared\Korn.Shared\Korn.Shared.csproj", "{C34E2092-7784-47E4-996C-76C6187C32BD}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|x64 = Debug|x64
@@ -53,6 +55,10 @@ Global
 		{32C1EF8C-A14E-487A-B7C3-BDFE2913C4DB}.Debug|x64.Build.0 = Debug|x64
 		{32C1EF8C-A14E-487A-B7C3-BDFE2913C4DB}.Release|x64.ActiveCfg = Release|x64
 		{32C1EF8C-A14E-487A-B7C3-BDFE2913C4DB}.Release|x64.Build.0 = Release|x64
+		{C34E2092-7784-47E4-996C-76C6187C32BD}.Debug|x64.ActiveCfg = Debug|x64
+		{C34E2092-7784-47E4-996C-76C6187C32BD}.Debug|x64.Build.0 = Debug|x64
+		{C34E2092-7784-47E4-996C-76C6187C32BD}.Release|x64.ActiveCfg = Release|x64
+		{C34E2092-7784-47E4-996C-76C6187C32BD}.Release|x64.Build.0 = Release|x64
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -63,5 +69,6 @@ Global
 		{A09E506A-6B74-4298-85BE-EB0D0295EC80} = {F5DBC88E-18F3-4E39-BCA0-220CC763F0AC}
 		{40390929-D504-4C68-80B5-3976700496CC} = {F5DBC88E-18F3-4E39-BCA0-220CC763F0AC}
 		{32C1EF8C-A14E-487A-B7C3-BDFE2913C4DB} = {F5DBC88E-18F3-4E39-BCA0-220CC763F0AC}
+		{C34E2092-7784-47E4-996C-76C6187C32BD} = {F5DBC88E-18F3-4E39-BCA0-220CC763F0AC}
 	EndGlobalSection
 EndGlobal

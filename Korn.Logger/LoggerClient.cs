@@ -5,25 +5,18 @@ using System;
 
 class LoggerClient
 {
-    public LoggerClient()
-    {
-        var serverConfiguration = new LoggerServerConfiguration();
-        client = new Client(serverConfiguration);        
-    }
+    public LoggerClient() => Client = new Client(LoggerServerConfiguration.Instance);
 
-    Client client;
+    internal Client Client;
 
     public LoggerHandle GetLoggerHandle(string path)
     {
         var handle = LoggerHandle.Invalid;
-        client.SendAndWait(new CreateLoggerPacket(path), callback => handle = callback.LoggerHandle);
-
-        if (handle.Handle == LoggerHandle.Invalid.Handle)
-            throw new Exception($"Korn.Logger.LoggerClient: the server didn't return a handle for the logger");
+        Client.SendAndWait(new CreateLoggerPacket(path), callback => handle = callback.LoggerHandle, TimeSpan.FromTicks(int.MaxValue));
 
         return handle;
     }
 
-    public void Write(LoggerHandle handle, string message) => client.Send(new WriteMessagePacket(handle, message));
-    public void Clear(LoggerHandle handle) => client.Send(new ClearLoggerPacket(handle));
+    public void Write(LoggerHandle handle, string message) => Client.Send(new WriteMessagePacket(handle, message));
+    public void Clear(LoggerHandle handle) => Client.Send(new ClearLoggerPacket(handle));
 }
