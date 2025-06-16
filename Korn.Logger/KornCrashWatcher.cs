@@ -3,9 +3,9 @@ using Korn.Logger.Core.Client;
 
 namespace Korn
 {
-    public class KornCrasher
+    public class KornCrashWatcher
     {
-        public KornCrasher(KornLogger logger) => this.logger = logger;
+        public KornCrashWatcher(KornLogger logger) => this.logger = logger;
 
         KornLogger logger;
         LoggerHandle loggerHandle => logger.Implementation.LoggerHandle;
