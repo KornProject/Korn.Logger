@@ -1,7 +1,7 @@
 ﻿using Korn.Logger.Core;
 using Korn.Logger.Core.Client;
 
-namespace Korn
+namespace Korn.Logger
 {
     public class KornCrashWatcher
     {

@@ -7,7 +7,7 @@ using Korn.Logger.Core;
 using System.Threading;
 using System;
 
-namespace Korn
+namespace Korn.Logger
 {
     public class KornLogger
     {
